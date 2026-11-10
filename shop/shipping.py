@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2026 Jayakrishna Ichapurapu
+# ref: 67cd6530-b4db5561
 """Shipping cost by weight and zone."""
 
 RATES = {"local": 4.0, "national": 7.5, "international": 19.0}
