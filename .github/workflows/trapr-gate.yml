@@ -50,13 +50,16 @@ jobs:
           PY
       - name: Ask the private sync to mark this pull request
         if: ${{ steps.check.outputs.missing != '0' && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository }}
+        continue-on-error: true   # a failed request still leaves the scheduled sync; the next step fails the check anyway
         env:
           GH_TOKEN: ${{ secrets.TRAPR_DISPATCH_TOKEN }}
         run: |
           if [ -z "$GH_TOKEN" ]; then echo "No TRAPR_DISPATCH_TOKEN; the scheduled sync will mark it."; exit 0; fi
-          gh workflow run trapr-sync.yml --repo jaykrishna316/trapr-vaults -f pr=${{ github.event.pull_request.number }} -f repo=${{ github.repository }}
+          ref=$(gh api repos/jaykrishna316/trapr-vaults --jq .default_branch) || { echo "::warning::TRAPR_DISPATCH_TOKEN can't see jaykrishna316/trapr-vaults. Give it access to that repo with Actions: Read and write."; exit 1; }
+          gh api -X POST repos/jaykrishna316/trapr-vaults/actions/workflows/trapr-sync.yml/dispatches             -f ref="$ref" -f "inputs[pr]=${{ github.event.pull_request.number }}" -f "inputs[repo]=${{ github.repository }}"
+          echo "Asked jaykrishna316/trapr-vaults to mark this pull request."
       - name: Fail until every file is marked
-        if: ${{ steps.check.outputs.missing != '0' }}
+        if: ${{ always() && steps.check.outputs.missing != '0' }}
         run: |
           echo "::error::${{ steps.check.outputs.missing }} file(s) have no TrapR build reference yet. TrapR's sync adds them with a comment-only commit; this check re-runs on that push."
           exit 1
