@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2026 Jayakrishna Ichapurapu
+# ref: 67cd6530-2d0b2dc8
 """Discount rules applied at checkout."""
 
 

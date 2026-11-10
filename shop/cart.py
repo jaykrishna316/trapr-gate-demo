@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2026 Jayakrishna Ichapurapu
+# ref: 67cd6530-7b2ea7c6
 """A tiny shopping cart."""
 from dataclasses import dataclass, field
 
